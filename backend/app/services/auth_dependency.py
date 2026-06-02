@@ -21,9 +21,7 @@ def get_current_user(
 
         email = payload.get("sub")
 
-        return {
-            "email": email
-        }
+        return email
 
     except:
         raise HTTPException(
