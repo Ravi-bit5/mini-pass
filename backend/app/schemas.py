@@ -13,3 +13,7 @@ class UserLogin(BaseModel):
 
 class AppCreate(BaseModel):
     name: str
+
+class DeploymentCreate(BaseModel):
+    app_name: str
+    github_url: str
