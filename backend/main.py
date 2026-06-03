@@ -8,6 +8,7 @@ from app.database import engine, Base
 from app.models.user import User
 from app.models.app import App
 from app.models.deployment import Deployment
+from app.models.deployment_log import DeploymentLog
 
 from app.routes.auth import router as auth_router
 from app.routes.apps import router as apps_router
