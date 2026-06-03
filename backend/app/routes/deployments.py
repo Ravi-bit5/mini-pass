@@ -14,9 +14,15 @@ def create_deployment(
     deployment_data: DeploymentCreate,
     db: Session = Depends(get_db)
 ):
+
+    if not deployment_data.github_url.startswith("https://github.com/"):
+        return {
+            "error": "Invalid GitHub repository URL"
+        }
+
     deployment = Deployment(
-        app_name=deployment_data.app_name,
-        github_url=deployment_data.github_url,
+        app_name=deployment_data.app_name.strip(),
+        github_url=deployment_data.github_url.strip(),
         status="pending"
     )
 
@@ -26,7 +32,6 @@ def create_deployment(
     return {
         "message": "Deployment created successfully"
     }
-
 @router.get("/deployments")
 def get_deployments(
     db: Session = Depends(get_db)
