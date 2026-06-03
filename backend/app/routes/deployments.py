@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.deployment import Deployment
 from app.schemas import DeploymentCreate
+from app.models.deployment_log import DeploymentLog
 
 router = APIRouter()
 
@@ -56,3 +57,40 @@ def build_deployment(
         "message": "Build completed",
         "status": deployment.status
     }
+
+@router.post("/deployments/{deployment_id}/generate-logs")
+def generate_logs(
+    deployment_id: int,
+    db: Session = Depends(get_db)
+):
+    logs = [
+        "Cloning repository...",
+        "Installing dependencies...",
+        "Building application...",
+        "Starting application...",
+        "Application running..."
+    ]
+
+    for message in logs:
+        log = DeploymentLog(
+            deployment_id=deployment_id,
+            message=message
+        )
+        db.add(log)
+
+    db.commit()
+
+    return {
+        "message": "Logs generated"
+    }
+
+@router.get("/deployments/{deployment_id}/logs")
+def get_logs(
+    deployment_id: int,
+    db: Session = Depends(get_db)
+):
+    logs = db.query(DeploymentLog).filter(
+        DeploymentLog.deployment_id == deployment_id
+    ).all()
+
+    return logs
