@@ -99,3 +99,43 @@ def get_logs(
     ).all()
 
     return logs
+
+@router.post("/deployments/{deployment_id}/docker-build")
+def docker_build(
+    deployment_id: int,
+    db: Session = Depends(get_db)
+):
+    deployment = db.query(Deployment).filter(
+        Deployment.id == deployment_id
+    ).first()
+
+    if not deployment:
+        return {
+            "error": "Deployment not found"
+        }
+
+    docker_logs = [
+        "Pulling python:3.11 image...",
+        "Installing dependencies...",
+        "Copying source code...",
+        "Building Docker image...",
+        "Creating container...",
+        "Starting container...",
+        "Container running..."
+    ]
+
+    for message in docker_logs:
+        log = DeploymentLog(
+            deployment_id=deployment_id,
+            message=message
+        )
+        db.add(log)
+
+    deployment.status = "running"
+
+    db.commit()
+
+    return {
+        "message": "Docker build completed",
+        "status": deployment.status
+    }

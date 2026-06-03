@@ -1,4 +1,5 @@
 
+from app.routes.dashboard import router as dashboard_router
 from app.routes.github import router as github_router
 from app.routes.deployments import router as deployments_router
 from fastapi import FastAPI, Depends
@@ -26,6 +27,7 @@ app.include_router(auth_router)
 app.include_router(apps_router)
 app.include_router(deployments_router)
 app.include_router(github_router)
+app.include_router(dashboard_router)
 
 @app.get("/")
 def home():
